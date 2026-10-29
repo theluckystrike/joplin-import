@@ -1,0 +1,1354 @@
+{
+ "slug": "joplin-import",
+ "module": "joplin-import/src/vector",
+ "function": "importCase",
+ "note": "Each case runs importCase(members, folder, existing). The test compares the keys of expected only. Members with base64 hold binary resource bytes.",
+ "cases": [
+  {
+   "name": "one notebook Work and one note Plan",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nShip the plan.\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "counts": {
+     "notes": 1,
+     "notebooks": 1,
+     "tags": 0,
+     "resources": 0
+    },
+    "newPaths": [
+     "Joplin import/Work/Plan--aaaa0001000000000000000000000001.md"
+    ],
+    "notes": {
+     "Joplin import/Work/Plan--aaaa0001000000000000000000000001.md": "---\ntitle: \"Plan\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 3ed59e43\n---\nShip the plan."
+    }
+   }
+  },
+  {
+   "name": "nested notebooks Work and Meetings map to Work/Meetings",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0002000000000000000000000002.md",
+      "text": "Meetings\n\nid: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0001000000000000000000000001\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Standup\n\nLine one.\n\nLine two.\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "folders": [
+     "Joplin import",
+     "Joplin import/Work",
+     "Joplin import/Work/Meetings"
+    ],
+    "newPaths": [
+     "Joplin import/Work/Meetings/Standup--aaaa0001000000000000000000000001.md"
+    ],
+    "notes": {
+     "Joplin import/Work/Meetings/Standup--aaaa0001000000000000000000000001.md": "---\ntitle: \"Standup\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 1f17a901\n---\nLine one.\n\nLine two."
+    }
+   }
+  },
+  {
+   "name": "note link becomes a vault link and keeps its label",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nRead [Other](:/aaaa0002000000000000000000000002) first.\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Other\n\nTarget.\n\nid: aaaa0002000000000000000000000002\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Work/Plan--aaaa0001000000000000000000000001.md": "---\ntitle: \"Plan\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: b8af7143\n---\nRead [[Joplin import/Work/Other--aaaa0002000000000000000000000002|Other]] first.",
+     "Joplin import/Work/Other--aaaa0002000000000000000000000002.md": "---\ntitle: \"Other\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 3b5f0efb\n---\nTarget."
+    }
+   }
+  },
+  {
+   "name": "resource embed copies one attachment and embeds it",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Trip\n\n![Photo](:/eeee0001000000000000000000000001)\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "counts": {
+     "notes": 1,
+     "notebooks": 1,
+     "tags": 0,
+     "resources": 1
+    },
+    "attachments": [
+     {
+      "path": "Joplin import/_resources/eeee0001000000000000000000000001.png",
+      "size": 8
+     }
+    ],
+    "newPaths": [
+     "Joplin import/_resources/eeee0001000000000000000000000001.png",
+     "Joplin import/Work/Trip--aaaa0001000000000000000000000001.md"
+    ],
+    "notes": {
+     "Joplin import/Work/Trip--aaaa0001000000000000000000000001.md": "---\ntitle: \"Trip\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: b626e464\n---\n![[Joplin import/_resources/eeee0001000000000000000000000001.png|Photo]]"
+    }
+   }
+  },
+  {
+   "name": "tag Research and a note-tag relation give a tags list",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nBody.\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "cccc0001000000000000000000000001.md",
+      "text": "Research\n\nid: cccc0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nis_shared: 0\nparent_id: \ntype_: 5"
+     },
+     {
+      "name": "dddd0001000000000000000000000001.md",
+      "text": "id: dddd0001000000000000000000000001\nnote_id: aaaa0001000000000000000000000001\ntag_id: cccc0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nis_shared: 0\ntype_: 6"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "counts": {
+     "notes": 1,
+     "notebooks": 1,
+     "tags": 1,
+     "resources": 0
+    },
+    "notes": {
+     "Joplin import/Work/Plan--aaaa0001000000000000000000000001.md": "---\ntitle: \"Plan\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags:\n  - \"Research\"\njoplin_hash: beec8e25\n---\nBody."
+    }
+   }
+  },
+  {
+   "name": "created_time and updated_time are written as ISO values",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Dated\n\nBody.\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2020-02-29T23:59:59.000Z\nupdated_time: 2021-07-04T12:00:00.123Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2020-02-29T23:59:59.000Z\nuser_updated_time: 2021-07-04T12:00:00.123Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Dated--aaaa0001000000000000000000000001.md": "---\ntitle: \"Dated\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2020-02-29T23:59:59.000Z\nupdated: 2021-07-04T12:00:00.123Z\ntags: []\njoplin_hash: 976f5caa\n---\nBody."
+    }
+   }
+  },
+  {
+   "name": "user_created_time wins over created_time like in the Joplin app",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Dated\n\nBody.\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2022-01-01T00:00:00.000Z\nupdated_time: 2022-01-01T00:00:00.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2019-05-05T05:05:05.000Z\nuser_updated_time: 2022-01-01T00:00:00.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Dated--aaaa0001000000000000000000000001.md": "---\ntitle: \"Dated\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2019-05-05T05:05:05.000Z\nupdated: 2022-01-01T00:00:00.000Z\ntags: []\njoplin_hash: a19b430c\n---\nBody."
+    }
+   }
+  },
+  {
+   "name": "link to an absent resource stays and the report names it",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Broken\n\n![Lost](:/eeee0001000000000000000000000001)\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Fine\n\nFine.\n\nid: aaaa0002000000000000000000000002\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "lost.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "newPaths": [
+     "Joplin import/Work/Broken--aaaa0001000000000000000000000001.md",
+     "Joplin import/Work/Fine--aaaa0002000000000000000000000002.md"
+    ],
+    "notes": {
+     "Joplin import/Work/Broken--aaaa0001000000000000000000000001.md": "---\ntitle: \"Broken\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 7e25a81e\n---\n![Lost](:/eeee0001000000000000000000000001)",
+     "Joplin import/Work/Fine--aaaa0002000000000000000000000002.md": "---\ntitle: \"Fine\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 7085b01a\n---\nFine."
+    },
+    "report": {
+     "missingResources": [
+      "Resource \"lost.png\" (eeee0001000000000000000000000001) in note \"Broken\": the archive has no file for it. The link stays as source text."
+     ],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "link to an id that is in no item stays and goes into the report",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Ghost\n\nSee [x](:/bbbb0009000000000000000000000009).\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Ghost--aaaa0001000000000000000000000001.md": "---\ntitle: \"Ghost\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 6da7d9fa\n---\nSee [x](:/bbbb0009000000000000000000000009)."
+    },
+    "report": {
+     "missingResources": [
+      "Resource or note bbbb0009000000000000000000000009 in note \"Ghost\" is not in the archive. The link stays as source text."
+     ],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "second import skips existing output paths",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Trip\n\n![Photo](:/eeee0001000000000000000000000001)\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import",
+    [
+     "Joplin import/Work/Trip--aaaa0001000000000000000000000001.md",
+     "Joplin import/_resources/eeee0001000000000000000000000001.png"
+    ]
+   ],
+   "expected": {
+    "newPaths": [],
+    "skipped": [
+     "Joplin import/_resources/eeee0001000000000000000000000001.png",
+     "Joplin import/Work/Trip--aaaa0001000000000000000000000001.md"
+    ]
+   }
+  },
+  {
+   "name": "tar member ../../outside.txt rejects the archive",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "../../outside.txt",
+      "text": "bad"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "error": "Unsafe archive member \"../../outside.txt\". The import stops before it writes a file."
+   }
+  },
+  {
+   "name": "absolute tar member path rejects the archive",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "/etc/outside.txt",
+      "text": "bad"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "error": "Unsafe archive member \"/etc/outside.txt\". The import stops before it writes a file."
+   }
+  },
+  {
+   "name": "symbolic link member rejects the archive",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "link.md",
+      "text": "",
+      "type": "2",
+      "link": "/etc/passwd"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "error": "Unsafe archive member \"link.md\": links are not allowed. The import stops before it writes a file."
+   }
+  },
+  {
+   "name": "preview plan of a closed window lists paths only",
+   "note": "The plan is in memory. The unit and e2e tests check that the vault gets no file.",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nBody.\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "New import"
+   ],
+   "expected": {
+    "folders": [
+     "New import",
+     "New import/Work"
+    ],
+    "newPaths": [
+     "New import/Work/Plan--aaaa0001000000000000000000000001.md"
+    ],
+    "skipped": []
+   }
+  },
+  {
+   "name": "HTML note is reported and not imported",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Web clip\n\n<p>Hi</p>\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 2\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Plain\n\nHi\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "counts": {
+     "notes": 2,
+     "notebooks": 0,
+     "tags": 0,
+     "resources": 0
+    },
+    "newPaths": [
+     "Joplin import/Plain--aaaa0002000000000000000000000002.md"
+    ],
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [
+      "HTML note \"Web clip\" (aaaa0001000000000000000000000001) is not imported. Only Markdown note bodies are converted."
+     ],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "encrypted item and a revision item are reported",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Secret\n\n\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 1\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Plain\n\nHi\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "99990001000000000000000000000001.md",
+      "text": "id: 99990001000000000000000000000001\nitem_id: aaaa0002000000000000000000000002\ntype_: 13"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "newPaths": [
+     "Joplin import/Plain--aaaa0002000000000000000000000002.md"
+    ],
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [
+      "Encrypted item aaaa0001000000000000000000000001",
+      "1 revision item (not imported)"
+     ],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "tag with a space becomes a hyphen tag and is reported",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nBody.\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "cccc0001000000000000000000000001.md",
+      "text": "project alpha\n\nid: cccc0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nis_shared: 0\nparent_id: \ntype_: 5"
+     },
+     {
+      "name": "dddd0001000000000000000000000001.md",
+      "text": "id: dddd0001000000000000000000000001\nnote_id: aaaa0001000000000000000000000001\ntag_id: cccc0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nis_shared: 0\ntype_: 6"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Plan--aaaa0001000000000000000000000001.md": "---\ntitle: \"Plan\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags:\n  - \"project-alpha\"\njoplin_hash: 9dd32848\n---\nBody."
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [
+      "Tag \"project alpha\" is written as \"project-alpha\"."
+     ],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "sibling notebooks with the same title get the id suffix",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "Work\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0002000000000000000000000002.md",
+      "text": "work\n\nid: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "A\n\na\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "B\n\nb\n\nid: aaaa0002000000000000000000000002\nparent_id: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "folders": [
+     "Joplin import",
+     "Joplin import/Work",
+     "Joplin import/work--ffff0002000000000000000000000002"
+    ],
+    "newPaths": [
+     "Joplin import/Work/A--aaaa0001000000000000000000000001.md",
+     "Joplin import/work--ffff0002000000000000000000000002/B--aaaa0002000000000000000000000002.md"
+    ]
+   }
+  },
+  {
+   "name": "note in a missing notebook goes to the top of the folder",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Lost\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "newPaths": [
+     "Joplin import/Lost--aaaa0001000000000000000000000001.md"
+    ],
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": [
+      "Note \"Lost\" (aaaa0001000000000000000000000001) has a missing notebook ffff0002000000000000000000000002. It is put at the top of the output folder."
+     ]
+    }
+   }
+  },
+  {
+   "name": "Joplin link in a fenced code block stays unchanged",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Code\n\n```\n[a](:/aaaa0002000000000000000000000002)\n```\n[b](:/aaaa0002000000000000000000000002)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "T\n\nt\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Code--aaaa0001000000000000000000000001.md": "---\ntitle: \"Code\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: dde58550\n---\n```\n[a](:/aaaa0002000000000000000000000002)\n```\n[[Joplin import/T--aaaa0002000000000000000000000002|b]]",
+     "Joplin import/T--aaaa0002000000000000000000000002.md": "---\ntitle: \"T\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: d112ad5c\n---\nt"
+    }
+   }
+  },
+  {
+   "name": "note link with a heading anchor keeps the anchor",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "A\n\n[Go](:/aaaa0002000000000000000000000002#next-step)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "B\n\nb\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/A--aaaa0001000000000000000000000001.md": "---\ntitle: \"A\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 7a3be066\n---\n[[Joplin import/B--aaaa0002000000000000000000000002#next-step|Go]]",
+     "Joplin import/B--aaaa0002000000000000000000000002.md": "---\ntitle: \"B\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: d2b892d4\n---\nb"
+    }
+   }
+  },
+  {
+   "name": "completed to-do note gets joplin_todo done",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Buy milk\n\n\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 1\ntodo_due: 0\ntodo_completed: 1700000000000\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Buy milk--aaaa0001000000000000000000000001.md": "---\ntitle: \"Buy milk\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_todo: done\njoplin_hash: da185a12\n---\n"
+    }
+   }
+  },
+  {
+   "name": "title with forbidden file name characters is cleaned",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "a/b: c? [d]\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "newPaths": [
+     "Joplin import/a b c d--aaaa0001000000000000000000000001.md"
+    ]
+   }
+  },
+  {
+   "name": "non-image resource becomes a plain vault link",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Docs\n\n[report.pdf](:/eeee0001000000000000000000000001)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "report.pdf\n\nid: eeee0001000000000000000000000001\nmime: application/pdf\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: pdf\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.pdf",
+      "base64": "JVBERi0xLjQK"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Docs--aaaa0001000000000000000000000001.md": "---\ntitle: \"Docs\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: af0a6ae8\n---\n[[Joplin import/_resources/eeee0001000000000000000000000001.pdf|report.pdf]]"
+    },
+    "attachments": [
+     {
+      "path": "Joplin import/_resources/eeee0001000000000000000000000001.pdf",
+      "size": 9
+     }
+    ]
+   }
+  },
+  {
+   "name": "output folder with .. is refused",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "../outside"
+   ],
+   "expected": {
+    "error": "The output folder must be a plain vault path, without \"..\", without hidden folders and without spaces at the ends of a name."
+   }
+  },
+  {
+   "name": "two members with the same name reject the archive",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Plan\n\ny\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "error": "The archive has two members with the name \"aaaa0001000000000000000000000001.md\"."
+   }
+  },
+  {
+   "name": "archive with no notes or notebooks is refused",
+   "args": [
+    [
+     {
+      "name": "cccc0001000000000000000000000001.md",
+      "text": "Lonely\n\nid: cccc0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nis_shared: 0\nparent_id: \ntype_: 5"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "error": "The archive has no Joplin notes or notebooks. Select a JEX file from Joplin (File, Export all, JEX)."
+   }
+  },
+  {
+   "name": "image inside a web link becomes a Markdown embed inside the link",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Clip\n\n[![](:/eeee0001000000000000000000000001)](https://example.com/page)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Clip--aaaa0001000000000000000000000001.md": "---\ntitle: \"Clip\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 409de293\n---\n[![](<Joplin import/_resources/eeee0001000000000000000000000001.png>)](https://example.com/page)"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "image inside a note link: the embed and the note link convert",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Clip\n\n[![photo](:/eeee0001000000000000000000000001)](:/aaaa0002000000000000000000000002)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Other\n\no\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Clip--aaaa0001000000000000000000000001.md": "---\ntitle: \"Clip\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 8b883d64\n---\n[![photo](<Joplin import/_resources/eeee0001000000000000000000000001.png>)](<Joplin import/Other--aaaa0002000000000000000000000002.md>)",
+     "Joplin import/Other--aaaa0002000000000000000000000002.md": "---\ntitle: \"Other\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 2817996b\n---\no"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "HTML img tag with a resource becomes a vault embed, a missing one goes into the report",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Clip\n\n<img src=\":/eeee0001000000000000000000000001\" alt=\"x\" width=\"300\">\n<img src=\":/eeee0009000000000000000000000009\">\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Clip--aaaa0001000000000000000000000001.md": "---\ntitle: \"Clip\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: c6070519\n---\n![[Joplin import/_resources/eeee0001000000000000000000000001.png|300]]\n<img src=\":/eeee0009000000000000000000000009\">"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [
+      "HTML image tag in note \"Clip\" points to eeee0009000000000000000000000009, which has no file in the archive. The tag stays as source text."
+     ],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "a line with backticks in the info string is not a fence; links after it convert",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Code\n\n```js```\n[after](:/aaaa0002000000000000000000000002)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Other\n\no\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Code--aaaa0001000000000000000000000001.md": "---\ntitle: \"Code\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 00caefb8\n---\n```js```\n[[Joplin import/Other--aaaa0002000000000000000000000002|after]]",
+     "Joplin import/Other--aaaa0002000000000000000000000002.md": "---\ntitle: \"Other\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 2817996b\n---\no"
+    }
+   }
+  },
+  {
+   "name": "names lose trailing dots after the cut and Windows reserved names get a suffix",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "CON\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0002000000000000000000000002.md",
+      "text": "lpt1.backup\n\nid: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "aux.txt\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0003000000000000000000000003.md",
+      "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.b\n\nx\n\nid: aaaa0003000000000000000000000003\nparent_id: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0004000000000000000000000004.md",
+      "text": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb .c\n\nx\n\nid: aaaa0004000000000000000000000004\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "folders": [
+     "Joplin import",
+     "Joplin import/CON_",
+     "Joplin import/lpt1_.backup"
+    ],
+    "newPaths": [
+     "Joplin import/CON_/aux_.txt--aaaa0001000000000000000000000001.md",
+     "Joplin import/lpt1_.backup/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--aaaa0003000000000000000000000003.md",
+     "Joplin import/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb--aaaa0004000000000000000000000004.md"
+    ]
+   }
+  },
+  {
+   "name": "notebooks deeper than 64 levels go into the level-64 folder and into the report",
+   "args": [
+    [
+     {
+      "name": "ffff0001000000000000000000000001.md",
+      "text": "L1\n\nid: ffff0001000000000000000000000001\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: \nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0002000000000000000000000002.md",
+      "text": "L2\n\nid: ffff0002000000000000000000000002\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0001000000000000000000000001\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0003000000000000000000000003.md",
+      "text": "L3\n\nid: ffff0003000000000000000000000003\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0002000000000000000000000002\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0004000000000000000000000004.md",
+      "text": "L4\n\nid: ffff0004000000000000000000000004\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0003000000000000000000000003\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0005000000000000000000000005.md",
+      "text": "L5\n\nid: ffff0005000000000000000000000005\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0004000000000000000000000004\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0006000000000000000000000006.md",
+      "text": "L6\n\nid: ffff0006000000000000000000000006\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0005000000000000000000000005\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0007000000000000000000000007.md",
+      "text": "L7\n\nid: ffff0007000000000000000000000007\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0006000000000000000000000006\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0008000000000000000000000008.md",
+      "text": "L8\n\nid: ffff0008000000000000000000000008\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0007000000000000000000000007\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0009000000000000000000000009.md",
+      "text": "L9\n\nid: ffff0009000000000000000000000009\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0008000000000000000000000008\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff000a00000000000000000000000a.md",
+      "text": "L10\n\nid: ffff000a00000000000000000000000a\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0009000000000000000000000009\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff000b00000000000000000000000b.md",
+      "text": "L11\n\nid: ffff000b00000000000000000000000b\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff000a00000000000000000000000a\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff000c00000000000000000000000c.md",
+      "text": "L12\n\nid: ffff000c00000000000000000000000c\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff000b00000000000000000000000b\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff000d00000000000000000000000d.md",
+      "text": "L13\n\nid: ffff000d00000000000000000000000d\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff000c00000000000000000000000c\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff000e00000000000000000000000e.md",
+      "text": "L14\n\nid: ffff000e00000000000000000000000e\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff000d00000000000000000000000d\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff000f00000000000000000000000f.md",
+      "text": "L15\n\nid: ffff000f00000000000000000000000f\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff000e00000000000000000000000e\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0010000000000000000000000010.md",
+      "text": "L16\n\nid: ffff0010000000000000000000000010\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff000f00000000000000000000000f\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0011000000000000000000000011.md",
+      "text": "L17\n\nid: ffff0011000000000000000000000011\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0010000000000000000000000010\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0012000000000000000000000012.md",
+      "text": "L18\n\nid: ffff0012000000000000000000000012\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0011000000000000000000000011\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0013000000000000000000000013.md",
+      "text": "L19\n\nid: ffff0013000000000000000000000013\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0012000000000000000000000012\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0014000000000000000000000014.md",
+      "text": "L20\n\nid: ffff0014000000000000000000000014\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0013000000000000000000000013\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0015000000000000000000000015.md",
+      "text": "L21\n\nid: ffff0015000000000000000000000015\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0014000000000000000000000014\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0016000000000000000000000016.md",
+      "text": "L22\n\nid: ffff0016000000000000000000000016\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0015000000000000000000000015\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0017000000000000000000000017.md",
+      "text": "L23\n\nid: ffff0017000000000000000000000017\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0016000000000000000000000016\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0018000000000000000000000018.md",
+      "text": "L24\n\nid: ffff0018000000000000000000000018\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0017000000000000000000000017\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0019000000000000000000000019.md",
+      "text": "L25\n\nid: ffff0019000000000000000000000019\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0018000000000000000000000018\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff001a00000000000000000000001a.md",
+      "text": "L26\n\nid: ffff001a00000000000000000000001a\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0019000000000000000000000019\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff001b00000000000000000000001b.md",
+      "text": "L27\n\nid: ffff001b00000000000000000000001b\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff001a00000000000000000000001a\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff001c00000000000000000000001c.md",
+      "text": "L28\n\nid: ffff001c00000000000000000000001c\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff001b00000000000000000000001b\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff001d00000000000000000000001d.md",
+      "text": "L29\n\nid: ffff001d00000000000000000000001d\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff001c00000000000000000000001c\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff001e00000000000000000000001e.md",
+      "text": "L30\n\nid: ffff001e00000000000000000000001e\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff001d00000000000000000000001d\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff001f00000000000000000000001f.md",
+      "text": "L31\n\nid: ffff001f00000000000000000000001f\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff001e00000000000000000000001e\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0020000000000000000000000020.md",
+      "text": "L32\n\nid: ffff0020000000000000000000000020\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff001f00000000000000000000001f\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0021000000000000000000000021.md",
+      "text": "L33\n\nid: ffff0021000000000000000000000021\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0020000000000000000000000020\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0022000000000000000000000022.md",
+      "text": "L34\n\nid: ffff0022000000000000000000000022\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0021000000000000000000000021\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0023000000000000000000000023.md",
+      "text": "L35\n\nid: ffff0023000000000000000000000023\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0022000000000000000000000022\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0024000000000000000000000024.md",
+      "text": "L36\n\nid: ffff0024000000000000000000000024\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0023000000000000000000000023\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0025000000000000000000000025.md",
+      "text": "L37\n\nid: ffff0025000000000000000000000025\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0024000000000000000000000024\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0026000000000000000000000026.md",
+      "text": "L38\n\nid: ffff0026000000000000000000000026\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0025000000000000000000000025\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0027000000000000000000000027.md",
+      "text": "L39\n\nid: ffff0027000000000000000000000027\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0026000000000000000000000026\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0028000000000000000000000028.md",
+      "text": "L40\n\nid: ffff0028000000000000000000000028\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0027000000000000000000000027\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0029000000000000000000000029.md",
+      "text": "L41\n\nid: ffff0029000000000000000000000029\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0028000000000000000000000028\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff002a00000000000000000000002a.md",
+      "text": "L42\n\nid: ffff002a00000000000000000000002a\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0029000000000000000000000029\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff002b00000000000000000000002b.md",
+      "text": "L43\n\nid: ffff002b00000000000000000000002b\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff002a00000000000000000000002a\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff002c00000000000000000000002c.md",
+      "text": "L44\n\nid: ffff002c00000000000000000000002c\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff002b00000000000000000000002b\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff002d00000000000000000000002d.md",
+      "text": "L45\n\nid: ffff002d00000000000000000000002d\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff002c00000000000000000000002c\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff002e00000000000000000000002e.md",
+      "text": "L46\n\nid: ffff002e00000000000000000000002e\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff002d00000000000000000000002d\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff002f00000000000000000000002f.md",
+      "text": "L47\n\nid: ffff002f00000000000000000000002f\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff002e00000000000000000000002e\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0030000000000000000000000030.md",
+      "text": "L48\n\nid: ffff0030000000000000000000000030\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff002f00000000000000000000002f\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0031000000000000000000000031.md",
+      "text": "L49\n\nid: ffff0031000000000000000000000031\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0030000000000000000000000030\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0032000000000000000000000032.md",
+      "text": "L50\n\nid: ffff0032000000000000000000000032\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0031000000000000000000000031\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0033000000000000000000000033.md",
+      "text": "L51\n\nid: ffff0033000000000000000000000033\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0032000000000000000000000032\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0034000000000000000000000034.md",
+      "text": "L52\n\nid: ffff0034000000000000000000000034\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0033000000000000000000000033\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0035000000000000000000000035.md",
+      "text": "L53\n\nid: ffff0035000000000000000000000035\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0034000000000000000000000034\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0036000000000000000000000036.md",
+      "text": "L54\n\nid: ffff0036000000000000000000000036\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0035000000000000000000000035\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0037000000000000000000000037.md",
+      "text": "L55\n\nid: ffff0037000000000000000000000037\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0036000000000000000000000036\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0038000000000000000000000038.md",
+      "text": "L56\n\nid: ffff0038000000000000000000000038\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0037000000000000000000000037\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0039000000000000000000000039.md",
+      "text": "L57\n\nid: ffff0039000000000000000000000039\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0038000000000000000000000038\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff003a00000000000000000000003a.md",
+      "text": "L58\n\nid: ffff003a00000000000000000000003a\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0039000000000000000000000039\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff003b00000000000000000000003b.md",
+      "text": "L59\n\nid: ffff003b00000000000000000000003b\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff003a00000000000000000000003a\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff003c00000000000000000000003c.md",
+      "text": "L60\n\nid: ffff003c00000000000000000000003c\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff003b00000000000000000000003b\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff003d00000000000000000000003d.md",
+      "text": "L61\n\nid: ffff003d00000000000000000000003d\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff003c00000000000000000000003c\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff003e00000000000000000000003e.md",
+      "text": "L62\n\nid: ffff003e00000000000000000000003e\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff003d00000000000000000000003d\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff003f00000000000000000000003f.md",
+      "text": "L63\n\nid: ffff003f00000000000000000000003f\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff003e00000000000000000000003e\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0040000000000000000000000040.md",
+      "text": "L64\n\nid: ffff0040000000000000000000000040\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff003f00000000000000000000003f\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0041000000000000000000000041.md",
+      "text": "L65\n\nid: ffff0041000000000000000000000041\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0040000000000000000000000040\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0042000000000000000000000042.md",
+      "text": "L66\n\nid: ffff0042000000000000000000000042\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0041000000000000000000000041\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0043000000000000000000000043.md",
+      "text": "L67\n\nid: ffff0043000000000000000000000043\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0042000000000000000000000042\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0044000000000000000000000044.md",
+      "text": "L68\n\nid: ffff0044000000000000000000000044\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0043000000000000000000000043\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0045000000000000000000000045.md",
+      "text": "L69\n\nid: ffff0045000000000000000000000045\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0044000000000000000000000044\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "ffff0046000000000000000000000046.md",
+      "text": "L70\n\nid: ffff0046000000000000000000000046\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nencryption_applied: 0\nparent_id: ffff0045000000000000000000000045\nis_shared: 0\ntype_: 2"
+     },
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Deep\n\nx\n\nid: aaaa0001000000000000000000000001\nparent_id: ffff0046000000000000000000000046\ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "newPaths": [
+     "Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64/Deep--aaaa0001000000000000000000000001.md"
+    ],
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": [
+      "Notebook \"L65\" (ffff0041000000000000000000000041) is deeper than 64 levels. Its notes go into Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64.",
+      "Notebook \"L66\" (ffff0042000000000000000000000042) is deeper than 64 levels. Its notes go into Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64.",
+      "Notebook \"L67\" (ffff0043000000000000000000000043) is deeper than 64 levels. Its notes go into Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64.",
+      "Notebook \"L68\" (ffff0044000000000000000000000044) is deeper than 64 levels. Its notes go into Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64.",
+      "Notebook \"L69\" (ffff0045000000000000000000000045) is deeper than 64 levels. Its notes go into Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64.",
+      "Notebook \"L70\" (ffff0046000000000000000000000046) is deeper than 64 levels. Its notes go into Joplin import/L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11/L12/L13/L14/L15/L16/L17/L18/L19/L20/L21/L22/L23/L24/L25/L26/L27/L28/L29/L30/L31/L32/L33/L34/L35/L36/L37/L38/L39/L40/L41/L42/L43/L44/L45/L46/L47/L48/L49/L50/L51/L52/L53/L54/L55/L56/L57/L58/L59/L60/L61/L62/L63/L64."
+     ]
+    }
+   }
+  },
+  {
+   "name": "note link label with escaped brackets converts without the backslashes",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Links\n\nSee [\\[WIP\\] Other](:/aaaa0002000000000000000000000002)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "[WIP] Other\n\no\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Links--aaaa0001000000000000000000000001.md": "---\ntitle: \"Links\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 8a26a5c2\n---\nSee [[Joplin import/WIP Other--aaaa0002000000000000000000000002|WIP Other]]",
+     "Joplin import/WIP Other--aaaa0002000000000000000000000002.md": "---\ntitle: \"[WIP] Other\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 65aedb55\n---\no"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "note link label with nested brackets converts",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Links\n\nSee [a [b] c](:/aaaa0002000000000000000000000002)\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Other\n\no\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Links--aaaa0001000000000000000000000001.md": "---\ntitle: \"Links\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: c60262d0\n---\nSee [[Joplin import/Other--aaaa0002000000000000000000000002|a b c]]",
+     "Joplin import/Other--aaaa0002000000000000000000000002.md": "---\ntitle: \"Other\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 2817996b\n---\no"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "a Joplin link that stays as source text goes into the report",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Links\n\nSee [x](:/aaaa0002000000000000000000000002 \"tip\")\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "aaaa0002000000000000000000000002.md",
+      "text": "Other\n\no\n\nid: aaaa0002000000000000000000000002\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Links--aaaa0001000000000000000000000001.md": "---\ntitle: \"Links\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 9b44e76b\n---\nSee [x](:/aaaa0002000000000000000000000002 \"tip\")",
+     "Joplin import/Other--aaaa0002000000000000000000000002.md": "---\ntitle: \"Other\"\njoplin_id: aaaa0002000000000000000000000002\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 2817996b\n---\no"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [
+      "Unconverted Joplin link to aaaa0002000000000000000000000002 in note \"Links\". The link stays as source text."
+     ],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "image inside a web link with a link title converts and keeps the title",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Clip\n\n[![](:/eeee0001000000000000000000000001)](https://x.org/p \"Title\")\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Clip--aaaa0001000000000000000000000001.md": "---\ntitle: \"Clip\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 887877ad\n---\n[![](<Joplin import/_resources/eeee0001000000000000000000000001.png>)](https://x.org/p \"Title\")"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  },
+  {
+   "name": "HTML img tag with a width in percent becomes an embed without a size",
+   "args": [
+    [
+     {
+      "name": "aaaa0001000000000000000000000001.md",
+      "text": "Clip\n\n<img src=\":/eeee0001000000000000000000000001\" width=\"50%\">\n\nid: aaaa0001000000000000000000000001\nparent_id: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2024-01-02T03:04:05.000Z\nis_conflict: 0\nauthor: \nsource_url: \nis_todo: 0\ntodo_due: 0\ntodo_completed: 0\nsource: joplin-desktop\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2024-01-02T03:04:05.000Z\nencryption_applied: 0\nmarkup_language: 1\nis_shared: 0\ntype_: 1"
+     },
+     {
+      "name": "eeee0001000000000000000000000001.md",
+      "text": "photo.png\n\nid: eeee0001000000000000000000000001\nmime: image/png\nfilename: \ncreated_time: 2023-03-14T09:26:53.589Z\nupdated_time: 2023-03-14T09:26:53.589Z\nuser_created_time: 2023-03-14T09:26:53.589Z\nuser_updated_time: 2023-03-14T09:26:53.589Z\nfile_extension: png\nencryption_cipher_text: \nencryption_applied: 0\nencryption_blob_encrypted: 0\nsize: 8\nis_shared: 0\ntype_: 4"
+     },
+     {
+      "name": "resources/eeee0001000000000000000000000001.png",
+      "base64": "iVBORw0KGgo="
+     }
+    ],
+    "Joplin import"
+   ],
+   "expected": {
+    "notes": {
+     "Joplin import/Clip--aaaa0001000000000000000000000001.md": "---\ntitle: \"Clip\"\njoplin_id: aaaa0001000000000000000000000001\ncreated: 2023-03-14T09:26:53.589Z\nupdated: 2024-01-02T03:04:05.000Z\ntags: []\njoplin_hash: 2b676aeb\n---\n![[Joplin import/_resources/eeee0001000000000000000000000001.png]]"
+    },
+    "report": {
+     "missingResources": [],
+     "missingNotes": [],
+     "unsupported": [],
+     "tags": [],
+     "notebooks": []
+    }
+   }
+  }
+ ]
+}

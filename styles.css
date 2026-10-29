@@ -1,0 +1,36 @@
+/* Styles for Joplin Export Import. Obsidian loads this file while the plugin is enabled. */
+.joplin-import-modal {
+  width: min(760px, 95vw);
+}
+
+.joplin-import {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.joplin-import summary {
+  cursor: pointer;
+  padding: 6px 0;
+  color: var(--text-muted);
+}
+
+.joplin-import-counts {
+  color: var(--text-accent);
+  font-weight: var(--font-semibold);
+}
+
+.joplin-import-paths,
+.joplin-import-list li {
+  font-size: var(--font-ui-small);
+  overflow-wrap: anywhere;
+}
+
+.joplin-import-status {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+.joplin-import-pro {
+  border-top: 1px solid var(--background-modifier-border);
+  margin-top: 12px;
+}

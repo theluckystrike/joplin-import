@@ -1,0 +1,68 @@
+[
+  {
+    "feature": "preview",
+    "caption": "The preview shows 5 notes, 3 notebooks, 2 tags and 2 resources, the output paths, and the report lists before a write.",
+    "note": "Start here.md",
+    "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.folder='Joplin preview'; const m=p.openImport(f('Joplin export.jex')); await m.refreshPreview(); m.contentEl.querySelectorAll('.joplin-import-list').forEach((el)=>{el.open=true;}); m.contentEl.scrollTop=0; return '5 notes, 3 notebooks, 2 tags, 2 resources';})()",
+    "zoom": 0.8,
+    "wait": 900,
+    "after": "const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); p.settings.folder='Joplin import'; p.settings.report=true; 'ok'"
+  },
+  {
+    "feature": "note-links",
+    "caption": "An imported note: Joplin links became vault links, the tag and both source dates are in the properties.",
+    "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.report=false; const a=await p.readArchive(f('Joplin export.jex')); await p.importPlan(p.prepare(a,'Joplin demo'),'Joplin Export Import/Joplin export.jex'); p.settings.report=true; await app.workspace.getLeaf(false).openFile(app.vault.getFileByPath('Joplin demo/Work/Q3 plan--4d5e6f70819243a4a526d7e8f90a1b23.md'),{state:{mode:'preview'}}); return 'note links and tags';})()",
+    "zoom": 0.85,
+    "wait": 900,
+    "after": "const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); p.settings.folder='Joplin import'; p.settings.report=true; 'ok'"
+  },
+  {
+    "feature": "attachment",
+    "caption": "The image resource is copied into _resources and embedded. The missing resource stays as source text.",
+    "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.report=false; const a=await p.readArchive(f('Joplin export.jex')); await p.importPlan(p.prepare(a,'Joplin demo'),'Joplin Export Import/Joplin export.jex'); p.settings.report=true; await app.workspace.getLeaf(false).openFile(app.vault.getFileByPath('Joplin demo/Personal/Lisbon trip--6f708192a31445c6c748f90a1b2c3d45.md'),{state:{mode:'preview'}}); return 'embedded attachment';})()",
+    "zoom": 0.85,
+    "wait": 900,
+    "after": "const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); p.settings.folder='Joplin import'; p.settings.report=true; 'ok'"
+  },
+  {
+    "feature": "resync",
+    "caption": "Pro: a later archive lists 2 changed notes to update. Notes that you edited stay unchanged.",
+    "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); let token='gho_'+'0'.repeat(36); p.pro.opts.tokens.get=()=>token; p.pro.opts.tokens.set=(v)=>{token=v;}; p.pro.opts.tokens.clear=()=>{token=null;}; p.pro.opts.http=async()=>({status:200,json:{data:{viewer:{login:'demo-reader',totalSponsorshipAmountAsSponsorInCents:1500},user:{viewerIsSponsoring:true,sponsorshipForViewerAsSponsor:{isActive:true,isOneTimePayment:false,tier:{name:'$5 a month',monthlyPriceInCents:500}}}}}}); await p.pro.refreshNow(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.report=false; const a=await p.readArchive(f('Joplin export.jex')); await p.importPlan(p.prepare(a,'Joplin resync demo'),'Joplin Export Import/Joplin export.jex'); p.settings.folder='Joplin resync demo'; const m=p.openImport(f('Joplin export later.jex')); await m.refreshPreview(); await m.previewChanges(); m.contentEl.querySelectorAll('.joplin-import-list').forEach((el)=>{el.open=el.textContent.includes('Notes to update');}); m.contentEl.scrollTop=m.contentEl.scrollHeight; return '2 changed';})()",
+    "zoom": 0.8,
+    "wait": 900,
+    "after": "const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); p.settings.folder='Joplin import'; p.settings.report=true; 'ok'"
+  },
+  {
+    "feature": "audit",
+    "caption": "Pro: the audit table of two archives with link, resource and unused counts.",
+    "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); let token='gho_'+'0'.repeat(36); p.pro.opts.tokens.get=()=>token; p.pro.opts.tokens.set=(v)=>{token=v;}; p.pro.opts.tokens.clear=()=>{token=null;}; p.pro.opts.http=async()=>({status:200,json:{data:{viewer:{login:'demo-reader',totalSponsorshipAmountAsSponsorInCents:1500},user:{viewerIsSponsoring:true,sponsorshipForViewerAsSponsor:{isActive:true,isOneTimePayment:false,tier:{name:'$5 a month',monthlyPriceInCents:500}}}}}}); await p.pro.refreshNow(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); const path=await p.audit([f('Joplin export.jex'),f('Joplin export later.jex')],'Joplin audits',new Date(2026,9,14,9,45,0)).catch(()=>'Joplin audits/Joplin archive audit 2026-10-14 094500.md'); await app.workspace.getLeaf(false).openFile(app.vault.getFileByPath(path),{state:{mode:'preview'}}); return 'audit';})()",
+    "zoom": 0.85,
+    "wait": 900,
+    "after": "const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); p.settings.folder='Joplin import'; p.settings.report=true; 'ok'"
+  },
+  {
+    "feature": "import-flow",
+    "caption": "Preview a Joplin archive, import it, then read a linked note and a note with an embedded sample image.",
+    "zoom": 0.8,
+    "frames": [
+      {
+        "note": "Start here.md",
+        "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.folder='Joplin preview'; const m=p.openImport(f('Joplin export.jex')); await m.refreshPreview(); m.contentEl.querySelectorAll('.joplin-import-list').forEach((el)=>{el.open=true;}); m.contentEl.scrollTop=0; return '5 notes, 3 notebooks, 2 tags, 2 resources';})()",
+        "hold": 1800
+      },
+      {
+        "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.report=true; const a=await p.readArchive(f('Joplin export.jex')); const r=await p.importPlan(p.prepare(a,'Joplin report demo'),'Joplin Export Import/Joplin export.jex', new Date(2026,9,14,9,30,0)); await app.workspace.getLeaf(false).openFile(app.vault.getFileByPath(r.report ?? 'Joplin report demo/Joplin import report 2026-10-14 093000.md'),{state:{mode:'preview'}}); return 'report';})()",
+        "hold": 1800
+      },
+      {
+        "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.report=false; const a=await p.readArchive(f('Joplin export.jex')); await p.importPlan(p.prepare(a,'Joplin demo'),'Joplin Export Import/Joplin export.jex'); p.settings.report=true; await app.workspace.getLeaf(false).openFile(app.vault.getFileByPath('Joplin demo/Work/Q3 plan--4d5e6f70819243a4a526d7e8f90a1b23.md'),{state:{mode:'preview'}}); return 'note links and tags';})()",
+        "hold": 1800
+      },
+      {
+        "eval": "(async()=>{const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); const f=(n)=>app.vault.getFileByPath('Joplin Export Import/'+n); p.settings.report=false; const a=await p.readArchive(f('Joplin export.jex')); await p.importPlan(p.prepare(a,'Joplin demo'),'Joplin Export Import/Joplin export.jex'); p.settings.report=true; await app.workspace.getLeaf(false).openFile(app.vault.getFileByPath('Joplin demo/Personal/Lisbon trip--6f708192a31445c6c748f90a1b2c3d45.md'),{state:{mode:'preview'}}); return 'embedded attachment';})()",
+        "hold": 1800
+      }
+    ],
+    "after": "const p=app.plugins.plugins['joplin-import']; p.closeImportWindows(); p.pro.signOut(); p.settings.folder='Joplin import'; p.settings.report=true; 'ok'"
+  }
+]
