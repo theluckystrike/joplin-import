@@ -65,9 +65,9 @@ For manual installation, copy `main.js`, `manifest.json` and `styles.css` from a
 
 ## Settings
 
-- Output folder: the default output folder. You can change it in the import window.
-- Write a report note: on by default.
-- Pro: sign in with GitHub, see the sponsorship status and refresh it.
+- Output folder: the default output folder. Change it in the import window.
+- Write a report note: default on.
+- Pro: GitHub sign in, sponsorship status and Refresh.
 
 ## FAQ
 
@@ -93,6 +93,8 @@ We did not test a JEX file from the Joplin app, a real phone or tablet, an archi
 
 The core features are free. Pro features need a GitHub Sponsors sponsorship of theluckystrike: $5 a month or more, or $15 once. A total payment of $15 meets the payment requirement for Pro without further payment. Sign-in and the checks below still apply. Your notes stay readable and editable with or without Pro.
 
+[One payment turns on Pro in every NoteMods plugin](https://notemods.com/pro/).
+
 GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=joplin-import. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
 Until you select "Sign in with GitHub" in the settings, Joplin Export Import makes no network requests. Sign in uses the GitHub device flow. Joplin Export Import sends its public client ID and the scope `read:user` to `https://github.com/login/device/code` and shows you a code. While you enter the code at https://github.com/login/device, it asks `https://github.com/login/oauth/access_token` every few seconds to check the sign-in status. The scope permits profile reads only. GitHub needs this access to show the sponsorship tier. It grants no repository scope and no write access.
@@ -103,4 +105,4 @@ After a successful check, Pro can work offline for up to 14 days. Sign out or a 
 
 ## Support
 
-Report a problem in the repository issues with the app version and the error text. Remove private text before you share an archive. Publisher: theluckystrike. License: MIT.
+Report a problem in the repository issues with the app version and the error text. Remove private text before you share an archive. License: MIT.
