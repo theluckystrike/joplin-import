@@ -8,6 +8,7 @@ import { auditArchives } from '../src/audit';
 import { convertLinks, planImport, renderNote } from '../src/convert';
 import { applyResync, prepareImport, resyncPreview, writeImport } from '../src/importer';
 import { isoTime, parseItem, readJex, type Archive, type Note } from '../src/joplin';
+import { GROWTH_LIMIT, growth } from './growth';
 import { readTar, writeTar } from '../src/tar';
 
 const id = (n: number) => n.toString(16).padStart(32, '0');
@@ -86,12 +87,14 @@ describe('independent review regressions', () => {
 		plugin.onunload();
 	});
 
-	it('preserves a large note without blocking for five seconds', () => {
-		const body = 'A line of source text\n'.repeat(200_000);
-		const started = performance.now();
-		const parsed = parseItem(`Large note\n\n${body}\n\nid: ${id(1)}\ntype_: 1`);
-		expect(parsed.body).toBe(body);
-		expect(performance.now() - started).toBeLessThan(5000);
+	it('preserves a large note, and the parse time grows linearly with the note length', () => {
+		const item = (lines: number) => `Large note\n\n${'A line of source text\n'.repeat(lines)}\n\nid: ${id(1)}\ntype_: 1`;
+		expect(parseItem(item(200_000)).body).toBe('A line of source text\n'.repeat(200_000));
+		const g = growth((lines) => {
+			const text = item(lines);
+			return () => parseItem(text);
+		}, 200_000);
+		expect(g.ratio, g.text).toBeLessThan(GROWTH_LIMIT);
 	});
 	it('keeps an edit made when resync reaches the write operation', async () => {
 		const app = App.createConfigured__({ files: {} });

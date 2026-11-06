@@ -10,6 +10,7 @@ import { readJex } from '../src/joplin';
 import { jexBytes } from '../src/vector';
 import type { Archive, Note } from '../src/joplin';
 import { resetPro } from '../src/pro';
+import { GROWTH_LIMIT, growth } from './growth';
 
 const id = (n: number) => n.toString(16).padStart(32, '0');
 const enc = new TextEncoder();
@@ -44,20 +45,26 @@ describe('long names', () => {
 });
 
 describe('large archives', () => {
-	it('plans 20000 notes with 60000 missing links in less than 5 seconds', () => {
-		const notes = Array.from({ length: 20_000 }, (_, i) => note(i + 1, `Note ${i}`, `[a](:/${id(900_000 + i)}) [b](:/${id(950_000 + i)}) [c](:/${id(990_000 + i)})`));
-		const started = performance.now();
-		const plan = planImport(archive(notes), 'Out', () => false);
-		expect(performance.now() - started).toBeLessThan(5000);
+	it('plans 20000 notes with 60000 missing links, and the time grows linearly with the note count', () => {
+		const notesOf = (n: number) => Array.from({ length: n }, (_, i) => note(i + 1, `Note ${i}`, `[a](:/${id(900_000 + i)}) [b](:/${id(950_000 + i)}) [c](:/${id(990_000 + i)})`));
+		const plan = planImport(archive(notesOf(20_000)), 'Out', () => false);
 		expect(plan.report.missingResources).toHaveLength(60_000);
+		const g = growth((n) => {
+			const a = archive(notesOf(n));
+			return () => planImport(a, 'Out', () => false);
+		}, 20_000);
+		expect(g.ratio, g.text).toBeLessThan(GROWTH_LIMIT);
 	});
 
-	it('audits two archives that share 40000 notes in less than 3 seconds', () => {
-		const notes = Array.from({ length: 40_000 }, (_, i) => note(i + 1, `N${i}`, `[x](:/${id(((i + 1) % 40_000) + 1)})`));
-		const started = performance.now();
-		const r = auditArchives([{ name: 'a.jex', archive: archive(notes) }, { name: 'b.jex', archive: archive(notes) }]);
-		expect(performance.now() - started).toBeLessThan(3000);
-		expect(r.sharedNotes).toHaveLength(40_000);
+	it('audits two archives that share 40000 notes, and the time grows linearly with the note count', () => {
+		const notesOf = (n: number) => Array.from({ length: n }, (_, i) => note(i + 1, `N${i}`, `[x](:/${id(((i + 1) % n) + 1)})`));
+		const audit = (notes: Note[]) => auditArchives([{ name: 'a.jex', archive: archive(notes) }, { name: 'b.jex', archive: archive(notes) }]);
+		expect(audit(notesOf(40_000)).sharedNotes).toHaveLength(40_000);
+		const g = growth((n) => {
+			const notes = notesOf(n);
+			return () => audit(notes);
+		}, 40_000);
+		expect(g.ratio, g.text).toBeLessThan(GROWTH_LIMIT);
 	});
 });
 
@@ -107,16 +114,21 @@ describe('unload during a write', () => {
 });
 
 describe('fix round (R-JOP)', () => {
-	it('previews a 2000-level notebook chain in less than 1 second', () => {
-		const members = [] as { name: string; text: string }[];
-		for (let i = 1; i <= 2000; i++) members.push({ name: `${id(i)}.md`, text: `n\n\nid: ${id(i)}\nparent_id: ${i > 1 ? id(i - 1) : ''}\ntype_: 2` });
-		members.push({ name: `${id(5000)}.md`, text: `leaf\n\nx\n\nid: ${id(5000)}\nparent_id: ${id(2000)}\nmarkup_language: 1\ntype_: 1` });
-		const a = readJex(jexBytes(members));
-		const started = performance.now();
-		const plan = planImport(a, 'Out', () => false);
-		expect(performance.now() - started).toBeLessThan(1000);
+	it('previews a 2000-level notebook chain, and the time grows linearly with the depth', () => {
+		const chain = (depth: number) => {
+			const members = [] as { name: string; text: string }[];
+			for (let i = 1; i <= depth; i++) members.push({ name: `${id(i)}.md`, text: `n\n\nid: ${id(i)}\nparent_id: ${i > 1 ? id(i - 1) : ''}\ntype_: 2` });
+			members.push({ name: `${id(5000)}.md`, text: `leaf\n\nx\n\nid: ${id(5000)}\nparent_id: ${id(depth)}\nmarkup_language: 1\ntype_: 1` });
+			return readJex(jexBytes(members));
+		};
+		const plan = planImport(chain(2000), 'Out', () => false);
 		expect(plan.notes[0]!.path.split('/')).toHaveLength(66);
 		expect(plan.report.notebooks).toHaveLength(2000 - 64);
+		const g = growth((depth) => {
+			const a = chain(depth);
+			return () => planImport(a, 'Out', () => false);
+		}, 2000);
+		expect(g.ratio, g.text).toBeLessThan(GROWTH_LIMIT);
 	});
 
 	it('a folder that cannot be created skips its notes, and the other notes and the report are written', async () => {
@@ -148,23 +160,26 @@ describe('fix round (R-JOP)', () => {
 
 describe('fix round 3 (R-JOP): long hostile lines', () => {
 	const K = 50 * 1024;
-	const fill = (unit: string) => unit.repeat(Math.ceil(K / unit.length)).slice(0, K);
+	const fill = (unit: string, size = K) => unit.repeat(Math.ceil(size / unit.length)).slice(0, size);
 	const notes = new Map([[id(3), `Out/Other--${id(3)}`]]);
 	const res = new Map([[id(2), `Out/_resources/${id(2)}.png`]]);
-	const time = (body: string) => {
-		const started = performance.now();
-		convertLinks(body, notes, res);
-		return performance.now() - started;
+	/** Growth of the convert time from a 5 KB line to a 50 KB line of the same unit. Backtracking regex work grows much faster. */
+	const lineGrowth = (unit: string) => {
+		const g = growth((size) => {
+			const body = fill(unit, size);
+			return () => convertLinks(body, notes, res);
+		}, K);
+		expect(g.ratio, `${JSON.stringify(unit)}: ${g.text}`).toBeLessThan(GROWTH_LIMIT);
 	};
 
-	it('converts a 50 KB line of escaped brackets in less than 300 ms', () => {
-		expect(time(fill('\\['))).toBeLessThan(300);
-		expect(time(fill('[\\'))).toBeLessThan(300);
+	it('converts a 50 KB line of escaped brackets in time that grows linearly with the line length', () => {
+		lineGrowth('\\[');
+		lineGrowth('[\\');
 	});
 
-	it('converts a 50 KB line of img tags without a closing bracket in less than 300 ms', () => {
-		expect(time(fill(`<img src=":/${id(2)}" `))).toBeLessThan(300);
-		expect(time(fill('<img '))).toBeLessThan(300);
+	it('converts a 50 KB line of img tags without a closing bracket in time that grows linearly with the line length', () => {
+		lineGrowth(`<img src=":/${id(2)}" `);
+		lineGrowth('<img ');
 	});
 
 	it('converts a 300-character label and an img tag; a longer label stays and is reported', () => {
