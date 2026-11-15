@@ -1,5 +1,11 @@
 # joplin-import
 
+## 1.0.5
+
+### Patch Changes
+
+- The Sponsor button now opens the NoteMods one-time tier.
+
 ## 1.0.4
 
 ### Patch Changes

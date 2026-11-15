@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { budget } from './tests/time-scale';
 
 // obsidian ships typings only, so tests run against obsidian-test-mocks in happy-dom.
 export default defineConfig({
@@ -8,6 +9,8 @@ export default defineConfig({
 		setupFiles: ['obsidian-test-mocks/vitest-setup'],
 		include: ['tests/**/*.test.ts'],
 		// Large-input regression tests need more than 5 seconds on shared CI runners.
-		testTimeout: 30000,
+		testTimeout: budget(30_000),
+		// Hooks get the same scale (s1108 T1). 10 s is the vitest default.
+		hookTimeout: budget(10_000),
 	},
 });
