@@ -1,5 +1,7 @@
 # Joplin Export Import
 
+[![Pro: $15 once or $5 a month on GitHub Sponsors](https://img.shields.io/badge/Pro-%2415%20once%20or%20%245%2Fmonth-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/theluckystrike) Pro costs [$15 one time](https://github.com/sponsors/theluckystrike/sponsorships?tier_id=666162&metadata_source=joplin-import-readme) or [$5 a month](https://github.com/sponsors/theluckystrike/sponsorships?tier_id=666161&metadata_source=joplin-import-readme) on GitHub Sponsors. One sponsorship turns on Pro in every NoteMods Obsidian plugin that has Pro.
+
 Import a Joplin JEX archive into your vault as Markdown notes. Notebooks become folders, Joplin links become vault links, and resources become attachments. The report names each Joplin Markdown link `[...](:/<id>)` that stays as source text. Notes keep their source ID, tags and dates in their properties. Check the preview before the import.
 
 The plugin reads the archive on your device and does not change it. The import needs no account and no network. The screenshots show sample notes.
