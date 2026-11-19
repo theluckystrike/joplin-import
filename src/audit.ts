@@ -1,6 +1,6 @@
 // Pro: a link and attachment audit of several archives. Pure: it reads archive models and writes nothing.
 import type { Archive } from './joplin';
-import { mapOutsideFences } from './convert';
+import { linkTargets, mapOutsideFences } from './convert';
 
 export interface ArchiveAudit {
 	name: string;
@@ -20,8 +20,6 @@ export interface ArchiveAudit {
 }
 export interface AuditResult { archives: ArchiveAudit[]; sharedNotes: string[] }
 
-const LINK = /(!?)\[[^\]\n]*\]\(:\/([0-9a-f]{32})(?:#[^)\s]*)?\)/g;
-
 export function auditArchives(list: { name: string; archive: Archive }[]): AuditResult {
 	const owner = new Map<string, string[]>();
 	for (const { name, archive } of list) {
@@ -38,10 +36,9 @@ export function auditArchives(list: { name: string; archive: Archive }[]): Audit
 		const used = new Set<string>();
 		for (const n of archive.notes) {
 			if (n.markup === 'html') { out.htmlNotes++; continue; }
-			const links: RegExpMatchArray[] = [];
-			mapOutsideFences(n.body, (line) => { for (const match of line.matchAll(LINK)) links.push(match); return line; });
-			for (const m of links) {
-				const id = m[2]!;
+			const links: string[] = [];
+			mapOutsideFences(n.body, (line) => { links.push(...linkTargets(line)); return line; });
+			for (const id of links) {
 				const res = archive.resources.get(id);
 				if (res) {
 					out.resourceLinks++;

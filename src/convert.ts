@@ -167,7 +167,9 @@ export function folderPaths(a: Archive, root: string, report: Report): Map<strin
 // read in linear time; a longer label stays as source text and the report names the link.
 const MAX_LABEL = 300;
 const LABEL = String.raw`(?:\\.|[^[\]\\\n]|\[(?:\\.|[^[\]\\\n]){0,${MAX_LABEL}}\](?!\()){0,${MAX_LABEL}}`;
-const LINK = new RegExp(String.raw`(!?)\[(${LABEL})\]\(:\/([0-9a-f]{32})(#[^)\s]*)?\)`, 'g');
+// A link does not start at a bracket after an odd number of backslashes, because that bracket is escaped. The
+// lookahead runs first, so the lookbehind runs only at a bracket and a long run of backslashes stays linear.
+const LINK = new RegExp(String.raw`(?=!?\[)(?<!(?:^|[^\\])(?:\\\\)*\\)(!?)\[(${LABEL})\]\(:\/([0-9a-f]{32})(#[^)\s]*)?\)`, 'g');
 // An image inside a link: [![alt](:/id)](:/id or URL "optional title"). The Joplin web clipper writes this form.
 const LINKED_IMAGE = new RegExp(String.raw`\[!\[((?:\\.|[^[\]\\\n]){0,${MAX_LABEL}})\]\(:\/([0-9a-f]{32})(?:#[^)\s]*)?\)\]\((?::\/([0-9a-f]{32})(#[^)\s]*)?|([^)\s]*))(\s+"[^"\n]*")?\)`, 'g');
 // A Joplin link target that is left after the conversion.
@@ -175,7 +177,9 @@ const LEFT = /\]\(:\/([0-9a-f]{32})/g;
 // An HTML image tag: <img ...> with at most MAX_TAG characters inside. The src and the width are read inside the match.
 // The Joplin rich text editor writes <img src=":/id" ...>.
 const MAX_TAG = 1000;
-const IMG_TAG = new RegExp(String.raw`<img\b[^>]{0,${MAX_TAG}}>`, 'gi');
+// Outside quotes a tag does not hold "<" or ">", so a line of "<img " text is read in linear time. A quoted attribute
+// value can hold "<" and ">", as HTML allows.
+const IMG_TAG = new RegExp(String.raw`<img\b(?:[^<>"']|"[^"\n]{0,${MAX_TAG}}"|'[^'\n]{0,${MAX_TAG}}'){0,${MAX_TAG}}>`, 'gi');
 const IMG_SRC = /\ssrc\s*=\s*(["']):\/([0-9a-f]{32})\1/i;
 
 function label(text: string): string {
@@ -204,6 +208,28 @@ export function mapOutsideFences(body: string, transform: (line: string) => stri
 		return transform(line);
 	});
 	return lines.join('\n');
+}
+
+/**
+ * Lists the Joplin link targets in one line in the order the import reads them: an image inside a link (the image,
+ * then a Joplin outer target), an HTML image tag with a ":/" source, then a plain link or embed. The audit uses this
+ * function so that it reads the same links as convertLinks.
+ */
+export function linkTargets(line: string): string[] {
+	const ids: string[] = [];
+	const rest = line
+		.replace(LINKED_IMAGE, (_all, _alt: string, inner: string, outer: string | undefined) => {
+			ids.push(inner);
+			if (outer !== undefined) ids.push(outer);
+			return ' ';
+		})
+		.replace(IMG_TAG, (all: string) => {
+			const id = IMG_SRC.exec(all)?.[2];
+			if (id !== undefined) ids.push(id);
+			return ' ';
+		});
+	for (const m of rest.matchAll(LINK)) ids.push(m[3]!);
+	return ids;
 }
 
 /**

@@ -1,6 +1,6 @@
 # Joplin Export Import
 
-[![Pro: $15 once or $5 a month on GitHub Sponsors](https://img.shields.io/badge/Pro-%2415%20once%20or%20%245%2Fmonth-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/theluckystrike) Pro costs [$15 one time](https://github.com/sponsors/theluckystrike/sponsorships?tier_id=666162&metadata_source=joplin-import-readme) or [$5 a month](https://github.com/sponsors/theluckystrike/sponsorships?tier_id=666161&metadata_source=joplin-import-readme) on GitHub Sponsors. One sponsorship turns on Pro in every NoteMods Obsidian plugin that has Pro.
+<a href="https://github.com/sponsors/theluckystrike"><img alt="Pro is 15 dollars once or 5 dollars a month on GitHub Sponsors" src="https://img.shields.io/badge/Pro-%2415%20once%20or%20%245%2Fmonth-ea4aaa?logo=githubsponsors&logoColor=white"></a>
 
 Import a Joplin JEX archive into your vault as Markdown notes. Notebooks become folders, Joplin links become vault links, and resources become attachments. The report names each Joplin Markdown link `[...](:/<id>)` that stays as source text. Notes keep their source ID, tags and dates in their properties. Check the preview before the import.
 
@@ -97,7 +97,7 @@ The core features are free. Pro features need a GitHub Sponsors sponsorship of t
 
 [One payment turns on Pro in every NoteMods plugin](https://notemods.com/pro/).
 
-GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=joplin-import. You need no account for the free features. Pro needs the GitHub account that sponsors.
+GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike/sponsorships?tier_id=666162&frequency=one-time&metadata_source=joplin-import. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
 Until you select "Sign in with GitHub" in the settings, Joplin Export Import makes no network requests. Sign in uses the GitHub device flow. Joplin Export Import sends its public client ID and the scope `read:user` to `https://github.com/login/device/code` and shows you a code. While you enter the code at https://github.com/login/device, it asks `https://github.com/login/oauth/access_token` every few seconds to check the sign-in status. The scope permits profile reads only. GitHub needs this access to show the sponsorship tier. It grants no repository scope and no write access.
 

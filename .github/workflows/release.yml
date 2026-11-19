@@ -94,11 +94,23 @@ jobs:
                   [ -f styles.css ] && echo "exists=true" >> "$GITHUB_OUTPUT" || echo "exists=false" >> "$GITHUB_OUTPUT"
 
             - name: Attest build provenance
-              uses: actions/attest@v4
+              # The Sigstore Rekor transparency log intermittently answers
+              # 404/502 when actions/attest fetches the tlog entry for the
+              # freshly created bundle ("InternalError: error fetching tlog
+              # entry - (404) Not Found", also seen as 502 from
+              # rekor.sigstore.dev, actions/attest#363). This is a transient
+              # service-side error, not a problem with the artifacts, so
+              # retry the whole attestation step a few times.
+              uses: Wandalen/wretry.action@v3
               with:
-                  subject-path: |
-                      main.js
-                      ${{ steps.styles.outputs.exists == 'true' && 'styles.css' || '' }}
+                  action: actions/attest@v4.2.2
+                  with: |
+                      subject-path: |
+                          main.js
+                          ${{ steps.styles.outputs.exists == 'true' && 'styles.css' || '' }}
+                  attempt_limit: 4
+                  attempt_delay: 30000
+
 
             - name: Write release notes
               env:

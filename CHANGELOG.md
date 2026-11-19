@@ -1,5 +1,11 @@
 # joplin-import
 
+## 1.0.6
+
+### Patch Changes
+
+- 2d85f91: The audit now reads the same Joplin links as the import. It counts images inside links, labels with escaped or nested brackets and HTML image tags. Long single-line notes stay fast.
+
 ## 1.0.5
 
 ### Patch Changes
